@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>오늘 어디서 집중할까? — 작업 장소 &amp; 노동요 추천</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app-shell">
+    <!-- 1. 첫 화면 (Intro) -->
+    <section id="screen-intro" class="screen intro-screen" aria-labelledby="intro-title">
+      <div>
+        <span class="brand-pill">FOCUS &amp; VIBE CURATOR</span>
+        <div class="intro-hero">
+          <div class="hero-visual" aria-hidden="true">
+            <div class="hero-icons-row">
+              <div class="hero-emoji-box">☕</div>
+              <div class="hero-wave">
+                <span class="wave-bars">
+                  <span class="wave-bar"></span>
+                  <span class="wave-bar"></span>
+                  <span class="wave-bar"></span>
+                  <span class="wave-bar"></span>
+                </span>
+                <span>NOW PLAYING</span>
+              </div>
+              <div class="hero-emoji-box">🎧</div>
+            </div>
+            <div class="intro-chips">
+              <span class="intro-chip">🔋 집중 배터리</span>
+              <span class="intro-chip">⏰ 시간대</span>
+              <span class="intro-chip">📝 오늘 할 일</span>
+              <span class="intro-chip">✨ 컨디션</span>
+            </div>
+          </div>
+
+          <div>
+            <h1 id="intro-title" class="intro-title" tabindex="-1">오늘 어디서 집중할까?</h1>
+            <p class="intro-subtitle">내 컨디션에 딱 맞는 작업 장소 &amp; 노동요를 추천해주는 웹서비스</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="intro-footer">
+        <button id="start-btn" type="button" class="primary-btn">
+          <span>오늘의 작업실 골라줘!</span>
+          <span aria-hidden="true">→</span>
+        </button>
+        <p class="intro-note">10초 만에 오늘의 작업 스팟과 플레이리스트 매칭</p>
+      </div>
+    </section>
+
+    <!-- 2. 입력 화면 (Input Form) -->
+    <section id="screen-input" class="screen" aria-labelledby="input-heading" hidden>
+      <div class="top-bar">
+        <button id="back-to-intro-btn" type="button" class="icon-btn">
+          <span aria-hidden="true">←</span>
+          <span>처음으로</span>
+        </button>
+        <span class="step-badge" aria-current="step">STEP 1 / 2 · 조건 선택</span>
+      </div>
+
+      <header class="input-header">
+        <h2 id="input-heading" class="screen-heading" tabindex="-1">지금 내 상태를 알려줘!</h2>
+        <p class="screen-desc">배터리와 시간대, 할 일, 컨디션을 고르면 찰떡 조합을 찾아줄게.</p>
+      </header>
+
+      <form id="recommend-form" class="form-stack" novalidate>
+        <!-- Validation Alert Banner -->
+        <div id="validation-alert" class="validation-alert" role="status" aria-live="polite" hidden tabindex="-1">
+          <span aria-hidden="true">⚠️</span>
+          <span id="validation-alert-text"></span>
+        </div>
+
+        <!-- 1. 오늘의 집중 배터리 (0~100%, 1% step) -->
+        <div class="control-card">
+          <div class="section-label-row">
+            <label for="battery-slider" class="section-title">
+              <span aria-hidden="true">🔋</span>
+              <span>오늘의 집중 배터리</span>
+            </label>
+            <span class="required-tag">1% 단위 조절</span>
+          </div>
+
+          <div class="battery-display">
+            <div class="battery-number-wrap">
+              <output id="battery-value" for="battery-slider" class="battery-number">50</output>
+              <span class="battery-unit">%</span>
+            </div>
+            <span id="battery-tier-badge" class="battery-tier-pill">🔋 시동 거는 중</span>
+          </div>
+
+          <div class="slider-wrap">
+            <input
+              type="range"
+              id="battery-slider"
+              name="battery"
+              class="battery-slider"
+              min="0"
+              max="100"
+              step="1"
+              value="50"
+              aria-valuetext="50퍼센트, 시동 거는 중"
+            >
+            <div class="slider-scale" aria-hidden="true">
+              <span>0% 방전 직전</span>
+              <span>50% 보통</span>
+              <span>100% 풀충전</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. 시간대 선택 (아침 / 점심 / 저녁 / 심야) -->
+        <fieldset id="fieldset-time" class="control-card" data-field="timeOfDay" data-label="시간대">
+          <legend>
+            <span><span aria-hidden="true">⏰</span> 시간대 선택</span>
+            <span class="required-tag">필수 선택</span>
+          </legend>
+          <div class="options-grid">
+            <label class="option-card">
+              <input type="radio" name="timeOfDay" value="morning" class="visually-hidden">
+              <span class="option-top">
+                <span class="option-title"><span aria-hidden="true">🌅</span> 아침</span>
+                <span class="option-check" aria-hidden="true">✓</span>
+              </span>
+              <span class="option-sub">06:00 - 11:00</span>
+            </label>
+
+            <label class="option-card">
+              <input type="radio" name="timeOfDay" value="lunch" class="visually-hidden">
+              <span class="option-top">
+                <span class="option-title"><span aria-hidden="true">☀️</span> 점심</span>
+                <span class="option-check" aria-hidden="true">✓</span>
+              </span>
+              <span class="option-sub">11:00 - 17:00</span>
+            </label>
+
+            <label class="option-card">
+              <input type="radio" name="timeOfDay" value="evening" class="visually-hidden">
+              <span class="option-top">
+                <span class="option-title"><span aria-hidden="true">🌆</span> 저녁</span>
+                <span class="option-check" aria-hidden="true">✓</span>
+              </span>
+              <span class="option-sub">17:00 - 22:00</span>
+            </label>
+
+            <label class="option-card">
+              <input type="radio" name="timeOfDay" value="night" class="visually-hidden">
+              <span class="option-top">
+                <span class="option-title"><span aria-hidden="true">🌙</span> 심야</span>
+                <span class="option-check" aria-hidden="true">✓</span>
+              </span>
+              <span class="option-sub">22:00 - 06:00</span>
+            </label>
+          </div>
+          <p class="fieldset-error"><span aria-hidden="true">❗</span> 지금 몇 시쯤인지 시간대를 골라주세요.</p>
+        </fieldset>
+
+        <!-- 3. 오늘의 할 일 -->
+        <fieldset id="fieldset-task" class="control-card" data-field="taskType" data-label="오늘의 할 일">
+          <legend>
+            <span><span aria-hidden="true">📝</span> 오늘의 할 일</span>
+            <span class="required-tag">필수 선택</span>
+          </legend>
+          <div class="options-grid">
+            <label class="option-card">
+              <input type="radio" name="taskType" value="study" class="visually-hidden">
+              <span class="option-top">
+                <span class="option-title"><span aria-hidden="true">📚</span> 시험·자격증</span>
+                <span class="option-check" aria-hidden="true">✓</span>
+              </span>
+              <span class="option-sub">암기 &amp; 문제풀이</span>
+            </label>
+
+            <label class="option-card">
+              <input type="radio" name="taskType" value="work" class="visually-hidden">
+              <span class="option-top">
+                <span class="option-title"><span aria-hidden="true">💻</span> 코딩·과제·업무</span>
+                <span class="option-check" aria-hidden="true">✓</span>
+              </span>
+              <span class="option-sub">노트북 딥워크</span>
+            </label>
+
+            <label class="option-card">
+              <input type="radio" name="taskType" value="reading" class="visually-hidden">
+              <span class="option-top">
+                <span class="option-title"><span aria-hidden="true">📖</span> 독서·다이어리</span>
+                <span class="option-check" aria-hidden="true">✓</span>
+              </span>
+              <span class="option-sub">차분한 기록</span>
+            </label>
+
+            <label class="option-card">
+              <input type="radio" name="taskType" value="creative" class="visually-hidden">
+              <span class="option-top">
+                <span class="option-title"><span aria-hidden="true">💡</span> 아이디어·창작</span>
+                <span class="option-check" aria-hidden="true">✓</span>
+              </span>
+              <span class="option-sub">기획 &amp; 브레인스토밍</span>
+            </label>
+          </div>
+          <p class="fieldset-error"><span aria-hidden="true">❗</span> 오늘 어떤 작업을 할지 골라주세요.</p>
+        </fieldset>
+
+        <!-- 4. 현재 컨디션 정도 -->
+        <fieldset id="fieldset-condition" class="control-card" data-field="condition" data-label="현재 컨디션">
+          <legend>
+            <span><span aria-hidden="true">✨</span> 현재 컨디션 정도</span>
+            <span class="required-tag">필수 선택</span>
+          </legend>
+          <div class="options-grid">
+            <label class="option-card">
+              <input type="radio" name="condition" value="high" class="visually-hidden">
+              <span class="option-top">
+                <span class="option-title"><span aria-hidden="true">🔥</span> 열정 풀충전</span>
+                <span class="option-check" aria-hidden="true">✓</span>
+              </span>
+              <span class="option-sub">의욕 뿜뿜 모드</span>
+            </label>
+
+            <label class="option-card">
+              <input type="radio" name="condition" value="normal" class="visually-hidden">
+              <span class="option-top">
+                <span class="option-title"><span aria-hidden="true">🙂</span> 적당히 집중</span>
+                <span class="option-check" aria-hidden="true">✓</span>
+              </span>
+              <span class="option-sub">무난하게 진행 중</span>
+            </label>
+
+            <label class="option-card">
+              <input type="radio" name="condition" value="sleepy" class="visually-hidden">
+              <span class="option-top">
+                <span class="option-title"><span aria-hidden="true">🥱</span> 출출·나른함</span>
+                <span class="option-check" aria-hidden="true">✓</span>
+              </span>
+              <span class="option-sub">당 충전 시급</span>
+            </label>
+
+            <label class="option-card">
+              <input type="radio" name="condition" value="tired" class="visually-hidden">
+              <span class="option-top">
+                <span class="option-title"><span aria-hidden="true">🫠</span> 힐링 필요</span>
+                <span class="option-check" aria-hidden="true">✓</span>
+              </span>
+              <span class="option-sub">번아웃 직전 상태</span>
+            </label>
+          </div>
+          <p class="fieldset-error"><span aria-hidden="true">❗</span> 현재 컨디션 정도를 골라주세요.</p>
+        </fieldset>
+
+        <div class="form-submit-wrap">
+          <button id="submit-btn" type="submit" class="primary-btn">
+            <span>오늘의 작업실 골라줘!</span>
+            <span aria-hidden="true">✨</span>
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- 3. 결과 화면 (Result) -->
+    <section id="screen-result" class="screen" aria-labelledby="result-heading" hidden>
+      <div class="top-bar">
+        <button id="edit-btn" type="button" class="icon-btn">
+          <span aria-hidden="true">←</span>
+          <span>조건 수정</span>
+        </button>
+        <span class="step-badge" aria-current="step">STEP 2 / 2 · 추천 완료</span>
+      </div>
+
+      <header class="input-header">
+        <h2 id="result-heading" class="screen-heading" tabindex="-1">오늘의 찰떡 작업실 도착!</h2>
+        <div id="result-summary-chips" class="selected-summary" aria-label="선택한 조건 요약"></div>
+      </header>
+
+      <div class="result-stack">
+        <!-- 추천 멘트 -->
+        <article class="ment-card" aria-label="추천 멘트">
+          <div class="card-eyebrow"><span aria-hidden="true">💬</span> 오늘의 한마디</div>
+          <p id="result-ment" class="ment-text"></p>
+        </article>
+
+        <!-- 오늘의 추천 작업 장소 -->
+        <article class="spot-card" aria-label="오늘의 추천 작업 장소">
+          <div class="spot-header">
+            <div>
+              <span id="result-spot-category" class="spot-category"></span>
+              <h3 id="result-spot-name" class="spot-name"></h3>
+            </div>
+            <div id="result-spot-emoji" class="spot-icon-badge" aria-hidden="true"></div>
+          </div>
+
+          <div class="spot-meta-list">
+            <div class="spot-meta-item">
+              <span class="meta-label">🔊 소음 분위기</span>
+              <span id="result-spot-noise" class="meta-value"></span>
+            </div>
+            <div class="spot-meta-item">
+              <span class="meta-label">🪑 추천 좌석</span>
+              <span id="result-spot-seat" class="meta-value"></span>
+            </div>
+            <div class="spot-meta-item full-span">
+              <span class="meta-label">🥤 시간대 맞춤 파트너</span>
+              <span id="result-spot-drink" class="meta-value"></span>
+            </div>
+          </div>
+
+          <div class="spot-map-section">
+            <div class="spot-map-header">
+              <span id="spot-map-title" class="meta-label">📍 내 주변 실제 매장 찾기</span>
+              <span id="spot-map-query-preview" class="spot-map-preview"></span>
+            </div>
+
+            <div class="spot-region-input-wrap">
+              <label for="map-region-input" class="visually-hidden">지역 또는 역 이름 입력 (선택)</label>
+              <input
+                type="text"
+                id="map-region-input"
+                class="spot-region-input"
+                placeholder="지역·역 이름 입력 (예: 강남역, 홍대) — 선택"
+                autocomplete="off"
+                enterkeyhint="search"
+              >
+            </div>
+
+            <div id="map-keyword-chips" class="map-keyword-chips" role="group" aria-label="추천 검색 키워드 선택"></div>
+
+            <div class="map-btn-row">
+              <a id="naver-map-link" class="map-link-btn naver-btn" href="https://map.naver.com" target="_blank" rel="noopener noreferrer">
+                <span class="map-brand-badge" aria-hidden="true">N</span>
+                <span>네이버 지도</span>
+                <span aria-hidden="true">↗</span>
+              </a>
+              <a id="kakao-map-link" class="map-link-btn kakao-btn" href="https://map.kakao.com" target="_blank" rel="noopener noreferrer">
+                <span class="map-brand-badge" aria-hidden="true">K</span>
+                <span>카카오맵</span>
+                <span aria-hidden="true">↗</span>
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <!-- 오늘의 추천 노동요 (플레이리스트) -->
+        <article class="playlist-card" aria-label="오늘의 추천 노동요">
+          <div class="card-eyebrow"><span aria-hidden="true">🎧</span> 오늘의 추천 노동요</div>
+          <div class="playlist-main">
+            <div id="vinyl-disc" class="vinyl-disc" aria-hidden="true"></div>
+            <div>
+              <h3 id="result-playlist-title" class="playlist-title"></h3>
+              <p id="result-playlist-genre" class="playlist-genre"></p>
+            </div>
+          </div>
+          <div id="result-playlist-tags" class="playlist-tags"></div>
+          <div class="playlist-track">
+            <span aria-hidden="true">🎵</span>
+            <span id="result-playlist-track"></span>
+          </div>
+          <div class="audio-controls">
+            <div class="audio-row">
+              <button id="audio-toggle-btn" type="button" class="audio-play-btn" aria-pressed="false">
+                <span class="audio-eq" aria-hidden="true">
+                  <span></span><span></span><span></span>
+                </span>
+                <span id="audio-btn-label">▶ 노동요 바로 듣기</span>
+              </button>
+            </div>
+            <div class="volume-wrap">
+              <span class="volume-icon" aria-hidden="true">🔊</span>
+              <input id="volume-slider" type="range" class="volume-slider" min="0" max="100" value="65" aria-label="노동요 음량 조절">
+            </div>
+            <a id="youtube-search-link" class="youtube-link-btn" href="https://www.youtube.com" target="_blank" rel="noopener noreferrer">
+              <span>YouTube에서 이 무드 풀버전 찾기</span>
+              <span aria-hidden="true">↗</span>
+            </a>
+          </div>
+        </article>
+
+        <!-- 추천 이유 -->
+        <article class="reason-card" aria-label="추천 이유">
+          <div class="card-eyebrow"><span aria-hidden="true">💡</span> 왜 여길 추천했을까?</div>
+          <p id="result-reason" class="reason-text"></p>
+        </article>
+
+        <div class="result-actions">
+          <button id="retry-btn" type="button" class="secondary-btn">다시 골라보기 🔄</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
